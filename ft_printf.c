@@ -13,19 +13,20 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include "ft_printf.h"
-#include "libft/libft.h"
 
 int				ft_printf(const char *fmt, ...)
 {
 	va_list args;
-	va_start(args);
+
+	va_start(args, fmt);
 	return (ft_fprintfv(1, fmt, args));
 }
 
 int				ft_fprintf(int fd, const char *fmt, ...)
 {
 	va_list args;
-	va_start(args);
+
+	va_start(args, fmt);
 	return (ft_fprintfv(fd, fmt, args));
 }
 
@@ -52,9 +53,9 @@ int				ft_fprintfv(int fd, const char *fmt, va_list args)
 		if (fmt[i] == '%')
 		{
 			size += write(fd, fmt, i);
-			fmt += i;
-			size += printf_handle_percent(&fmt);
-			i = 0;
+			fmt += i + 1;
+			size += printf_handle_percent(&fmt, fd, args);
+			i = 1;
 		}
 		else
 			i++;
