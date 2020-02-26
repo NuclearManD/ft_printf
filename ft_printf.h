@@ -13,6 +13,11 @@
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
 
-int				ft_printf(const char *restrict, ffof ffof);
+#include <stdarg.h>
+
+int				ft_printf(const char *fmt, ...);
+int				ft_fprintf(int fd, const char *fmt, ...);
+int				ft_printfv(const char *fmt, va_list args);
+int				ft_fprintfv(int fd, const char *fmt, va_list args);
 
 #endif
