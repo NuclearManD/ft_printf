@@ -14,7 +14,7 @@
 #include "unistd.h"
 #include <stdarg.h>
 
-static unsigned int	handle_flags(const char **fmtp)
+static unsigned	handle_flags(const char **fmtp)
 {
 	unsigned int out;
 
@@ -38,7 +38,7 @@ static unsigned int	handle_flags(const char **fmtp)
 	return (out);
 }
 
-int					printf_handle_percent(const char **fmtp, int fd, va_list  args)
+int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
 	unsigned int flags;
 
