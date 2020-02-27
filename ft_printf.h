@@ -37,6 +37,8 @@ typedef struct	s_fmt_data {
 	char			cnvrt;
 }				t_fmt_data;
 
+int				ft_printf(const char *fmt, ...);
+int				ft_fprintf(int fd, const char *fmt, ...);
 int				ft_printfv(const char *fmt, va_list args);
 int				ft_fprintfv(int fd, const char *fmt, va_list args);
 int				printf_handle_char(int fd, va_list args, t_fmt_data *data);

@@ -25,7 +25,7 @@ int			printf_handle_string(int fd, va_list args, t_fmt_data *data)
 	{
 		wstr = va_arg(args, wchar_t*);
 		if (wstr == NULL)
-			wstr = L"null";
+			wstr = L"(null)";
 		len = 0;
 		while (wstr[len])
 			len++;
@@ -33,7 +33,7 @@ int			printf_handle_string(int fd, va_list args, t_fmt_data *data)
 	}
 	str = va_arg(args, const char*);
 	if (str == NULL)
-		str = "null";
+		str = "(null)";
 	len = 0;
 	while (str[len])
 		len++;
