@@ -10,14 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf.h"
 #include <unistd.h>
 #include <stdarg.h>
+#include <wchar.h>
 
-int			printf_handle_string(int fd, va_list args, unsigned flags, int len)
+int			printf_handle_string(int fd, va_list args, t_fmt_data *data)
 {
 	const char	*str;
+	wchar_t		*wstr;
 	int			len;
 
+	if (data->cnvrt == 'S' || data->type == MOD_LONG)
+	{
+		wstr = va_arg(args, wchar_t*);
+		if (wstr == NULL)
+			wstr = L"null";
+		len = 0;
+		while (wstr[len])
+			len++;
+		return (write(fd, wstr, len * sizeof(wchar_t)));
+	}
 	str = va_arg(args, const char*);
 	if (str == NULL)
 		str = "null";

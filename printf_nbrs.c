@@ -10,9 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf.h"
 #include <unistd.h>
 #include <stdarg.h>
 
-int			printf_handle_number(int fd, va_list args, unsigned flags, int len)
+int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
 {
+	return (write(fd, va_arg(args, char*), data->flags));
 }

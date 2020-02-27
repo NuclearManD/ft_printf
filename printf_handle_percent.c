@@ -100,21 +100,19 @@ char			in_str(char c, const char *s)
 
 int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
-	unsigned int	flags;
-	char			type;
-	int				min_width;
-	int				precision;
+	t_fmt_data data;
 
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));
-	flags = handle_flags_set_1(fmtp);
-	scan_nums(fmtp, &min_width, &precision);
-	type = handle_length_mod(fmtp);
+	data.flags = handle_flags_set_1(fmtp);
+	scan_nums(fmtp, &data.min_width, &data.precision);
+	data.type = handle_length_mod(fmtp);
+	data.cnvrt = **fmtp;
 	if (**fmtp == 's' || **fmtp == 'S')
-		return (printf_handle_string(fd, args));
+		return (printf_handle_string(fd, args, &data));
 	else if (in_str(**fmtp, "pdDioOuUxX"))
-		return (printf_handle_number(fd, args));
+		return (printf_handle_number(fd, args, &data));
 	else if (**fmtp == 'c' || **fmtp == 'C')
-		return (printf_handle_char(fd, args));
+		return (printf_handle_char(fd, args, &data));
 	return (-1);
 }

@@ -29,13 +29,21 @@
 # define MOD_INTMAX_T 5
 # define MOD_SIZE_T 6
 
+typedef struct	s_fmt_data {
+	unsigned int	flags;
+	char			type;
+	int				min_width;
+	int				precision;
+	char			cnvrt;
+}				t_fmt_data;
+
 int				ft_printfv(const char *fmt, va_list args);
 int				ft_fprintfv(int fd, const char *fmt, va_list args);
-int				printf_handle_char(int fd, va_list args, unsigned flags, int len);
+int				printf_handle_char(int fd, va_list args, t_fmt_data *data);
 void			scan_nums(const char **fmtp, int *min_width, int *precision);
 char			in_str(char c, const char *s);
 int				printf_handle_percent(const char **fmtp, int fd, va_list args);
-int				printf_handle_number(int fd, va_list args, unsigned flags, int len);
-int				printf_handle_string(int fd, va_list args, unsigned flags, int len);
+int				printf_handle_number(int fd, va_list args, t_fmt_data *data);
+int				printf_handle_string(int fd, va_list args, t_fmt_data *data);
 
 #endif
