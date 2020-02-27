@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dbrophy <dbrophy@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/25 18:46:51 by dbrophy           #+#    #+#             */
-/*   Updated: 2020/02/25 18:46:51 by dbrophy          ###   ########.fr       */
+/*   Created: 2020/02/26 17:36:59 by dbrophy           #+#    #+#             */
+/*   Updated: 2020/02/26 17:36:59 by dbrophy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,13 @@
 # define MOD_INTMAX_T 5
 # define MOD_SIZE_T 6
 
-int				ft_printf(const char *fmt, ...);
-int				ft_fprintf(int fd, const char *fmt, ...);
 int				ft_printfv(const char *fmt, va_list args);
 int				ft_fprintfv(int fd, const char *fmt, va_list args);
+int				printf_handle_char(int fd, va_list args, unsigned flags, int len);
+void			scan_nums(const char **fmtp, int *min_width, int *precision);
+char			in_str(char c, const char *s);
 int				printf_handle_percent(const char **fmtp, int fd, va_list args);
-int				printf_handle_string(int fd, va_list args);
+int				printf_handle_number(int fd, va_list args, unsigned flags, int len);
+int				printf_handle_string(int fd, va_list args, unsigned flags, int len);
 
 #endif

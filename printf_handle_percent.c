@@ -90,6 +90,14 @@ void			scan_nums(const char **fmtp, int *min_width, int *precision)
 		*precision = 6;
 }
 
+char			in_str(char c, const char *s)
+{
+	while (*s)
+		if (c == *(s++))
+			return (1);
+	return (0);
+}
+
 int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
 	unsigned int	flags;
@@ -102,7 +110,11 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 	flags = handle_flags_set_1(fmtp);
 	scan_nums(fmtp, &min_width, &precision);
 	type = handle_length_mod(fmtp);
-	if (**fmtp == 's')
+	if (**fmtp == 's' || **fmtp == 'S')
 		return (printf_handle_string(fd, args));
+	else if (in_str(**fmtp, "pdDioOuUxX"))
+		return (printf_handle_number(fd, args));
+	else if (**fmtp == 'c' || **fmtp == 'C')
+		return (printf_handle_char(fd, args));
 	return (-1);
 }
