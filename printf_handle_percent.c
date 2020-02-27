@@ -66,14 +66,41 @@ static char		handle_length_mod(const char **fmtp)
 	return (out);
 }
 
+/*
+** Scan width and precision bro :dab:
+*/
+
+void			scan_nums(const char **fmtp, int *min_width, int *precision)
+{
+	int isneg;
+
+	*min_width = 0;
+	isneg = 1 - 2 * (**fmtp == '-');
+	if (**fmtp == '-' || **fmtp == '+')
+		(*fmtp)++;
+	while ((**fmtp <= '9') && (**fmtp >= '0'))
+		*min_width = ((*min_width) * 10) + isneg * (*((*fmtp)++) - '0');
+	if (**fmtp == '.')
+	{
+		*precision = 0;
+		while ((**fmtp <= '9') && (**fmtp >= '0'))
+			*precision = ((*precision) * 10) + *((*fmtp)++) - '0';
+	}
+	else
+		*precision = 6;
+}
+
 int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
 	unsigned int	flags;
 	char			type;
+	int				min_width;
+	int				precision;
 
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));
 	flags = handle_flags_set_1(fmtp);
+	scan_nums(fmtp, &min_width, &precision);
 	type = handle_length_mod(fmtp);
 	if (**fmtp == 's')
 		return (printf_handle_string(fd, args));
