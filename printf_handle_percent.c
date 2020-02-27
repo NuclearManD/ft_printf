@@ -14,22 +14,22 @@
 #include "unistd.h"
 #include <stdarg.h>
 
-static unsigned	handle_flags(const char **fmtp)
+static unsigned	handle_flags_set_1(const char **fmtp)
 {
 	unsigned int out;
 
 	out = 0;
 	while (**fmtp)
 	{
-		if (**fmtp == '#')
+		if (**fmtp == '#' && !(out & FLAG_POUND))
 			out |= FLAG_POUND;
-		else if (**fmtp == ' ')
+		else if (**fmtp == ' ' && !(out & FLAG_SPCE))
 			out |= FLAG_SPCE;
-		else if (**fmtp == '0')
+		else if (**fmtp == '0' && !(out & FLAG_ZERO))
 			out |= FLAG_ZERO;
-		else if (**fmtp == '-')
+		else if (**fmtp == '-' && !(out & FLAG_MINUS))
 			out |= FLAG_MINUS;
-		else if (**fmtp == '+')
+		else if (**fmtp == '+' && !(out & FLAG_PLUS))
 			out |= FLAG_PLUS;
 		else
 			break ;
@@ -38,13 +38,43 @@ static unsigned	handle_flags(const char **fmtp)
 	return (out);
 }
 
+static char		handle_length_mod(const char **fmtp)
+{
+	char out;
+
+	if (**fmtp == 'h' && *(*fmtp + 1) != 'h')
+		out = MOD_SHORT;
+	else if (**fmtp == 'h' && *(*fmtp + 1) == 'h')
+	{
+		(*fmtp)++;
+		out = MOD_CHAR;
+	}
+	else if (**fmtp == 'l' && *(*fmtp + 1) != 'l')
+		out = MOD_LONG;
+	else if (**fmtp == 'l' && *(*fmtp + 1) == 'l')
+	{
+		(*fmtp)++;
+		out = MOD_LONG_LONG;
+	}
+	else if (**fmtp == 'j')
+		out = MOD_INTMAX_T;
+	else if (**fmtp == 'z')
+		out = MOD_SIZE_T;
+	else
+		return (MOD_UNSPECIFIED);
+	(*fmtp)++;
+	return (out);
+}
+
 int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
-	unsigned int flags;
+	unsigned int	flags;
+	char			type;
 
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));
-	flags = handle_flags(fmtp);
+	flags = handle_flags_set_1(fmtp);
+	type = handle_length_mod(fmtp);
 	if (**fmtp == 's')
 		return (printf_handle_string(fd, args));
 	return (-1);

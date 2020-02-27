@@ -21,6 +21,14 @@
 # define FLAG_PLUS 8
 # define FLAG_SPCE 16
 
+# define MOD_UNSPECIFIED 0
+# define MOD_CHAR 1
+# define MOD_SHORT 2
+# define MOD_LONG 3
+# define MOD_LONG_LONG 4
+# define MOD_INTMAX_T 5
+# define MOD_SIZE_T 6
+
 int				ft_printf(const char *fmt, ...);
 int				ft_fprintf(int fd, const char *fmt, ...);
 int				ft_printfv(const char *fmt, va_list args);
