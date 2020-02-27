@@ -108,11 +108,15 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 	scan_nums(fmtp, &data.min_width, &data.precision);
 	data.type = handle_length_mod(fmtp);
 	data.cnvrt = **fmtp;
+	if (data.cnvrt == 'D' || data.cnvrt == 'O' || data.cnvrt == 'U')
+	{
+		data.cnvrt += 32;
+		data.type = MOD_LONG;
+	}
 	if (data.cnvrt == 's' || data.cnvrt == 'S')
 		return (printf_handle_string(fd, args, &data));
 	else if (in_str(data.cnvrt, "pdDioOuUxX"))
 		return (printf_handle_number(fd, args, &data));
-	else if (data.cnvrt == 'c' || data.cnvrt == 'C')
+	else
 		return (printf_handle_char(fd, args, &data));
-	return (-1);
 }

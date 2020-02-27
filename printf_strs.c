@@ -20,6 +20,7 @@ int			printf_handle_string(int fd, va_list args, t_fmt_data *data)
 	const char	*str;
 	wchar_t		*wstr;
 	int			len;
+	int			printed;
 
 	if (data->cnvrt == 'S' || data->type == MOD_LONG)
 	{
@@ -29,7 +30,8 @@ int			printf_handle_string(int fd, va_list args, t_fmt_data *data)
 		len = 0;
 		while (wstr[len])
 			len++;
-		return (write(fd, wstr, len * sizeof(wchar_t)));
+		printed = printf_fill(fd, len, data);
+		return (printed + write(fd, wstr, len * sizeof(wchar_t)));
 	}
 	str = va_arg(args, const char*);
 	if (str == NULL)
@@ -37,5 +39,6 @@ int			printf_handle_string(int fd, va_list args, t_fmt_data *data)
 	len = 0;
 	while (str[len])
 		len++;
-	return (write(fd, str, len));
+	printed = printf_fill(fd, len, data);
+	return (printed + write(fd, str, len));
 }

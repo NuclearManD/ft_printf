@@ -1,19 +1,36 @@
-FLAGS=-Wall -Wextra -Werror -O3
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: dbrophy <dbrophy@student.42.us.org>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/02/26 10:38:40 by dbrophy           #+#    #+#              #
+#    Updated: 2020/02/26 10:41:22 by dbrophy          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+CC=gcc
+CFLAGS=-Wall -Wextra -Werror -O3 -I. -c
 NAME=libftprintf.a
+OBJ=$(SRC:.c=.o)
+SRC=	ft_printf.c \
+		printf_chrs.c \
+		printf_fill.c \
+		printf_handle_percent.c \
+		printf_nbrs.c \
+		printf_strs.c \
+
 
 $(NAME): 
-	gcc $(FLAGS) ft_printf.c -c -o ft_printf.c.o
-	gcc $(FLAGS) printf_chrs.c -c -o printf_chrs.c.o
-	gcc $(FLAGS) printf_handle_percent.c -c -o printf_handle_percent.c.o
-	gcc $(FLAGS) printf_nbrs.c -c -o printf_nbrs.c.o
-	gcc $(FLAGS) printf_strs.c -c -o printf_strs.c.o
-	
-	ar rcs $(NAME) ft_printf.c.o printf_chrs.c.o printf_handle_percent.c.o printf_nbrs.c.o printf_strs.c.o
+	$(CC) $(CFLAGS) $(SRC)
+	ar rc $(NAME) $(OBJ)
+	ranlib $(NAME)
 
 all: $(NAME)
 
 clean: 
-	rm -f *.o
+	rm -f $(OBJ)
 
 fclean: clean
 	rm -f $(NAME)

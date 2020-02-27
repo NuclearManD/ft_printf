@@ -16,5 +16,8 @@
 
 int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
 {
-	return (write(fd, va_arg(args, char*), data->flags));
+	int len = 0;
+
+	len += va_arg(args, int);
+	return (printf_fill(fd, len, data));
 }

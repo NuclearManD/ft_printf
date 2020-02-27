@@ -47,5 +47,6 @@ char			in_str(char c, const char *s);
 int				printf_handle_percent(const char **fmtp, int fd, va_list args);
 int				printf_handle_number(int fd, va_list args, t_fmt_data *data);
 int				printf_handle_string(int fd, va_list args, t_fmt_data *data);
+int			printf_fill(int fd, int dlen, t_fmt_data *f);
 
 #endif
