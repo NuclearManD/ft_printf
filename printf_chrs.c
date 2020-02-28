@@ -25,17 +25,18 @@ int			printf_handle_char(int fd, va_list args, t_fmt_data *data)
 	{
 		len = printf_fill(fd, 1, data);
 		c = (char)va_arg(args, int);
-		return (len + write(fd, &c, 1));
+		len += write(fd, &c, 1);
 	}
 	else if (data->cnvrt == 'C')
 	{
 		len = printf_fill(fd, sizeof(wint_t), data);
 		wc = va_arg(args, wint_t);
-		return (len + write(fd, &wc, sizeof(wint_t)));
+		len += write(fd, &wc, sizeof(wint_t));
 	}
 	else
 	{
 		len = printf_fill(fd, 1, data);
-		return (len + write(fd, &(data->cnvrt), 1));
+		len += write(fd, &(data->cnvrt), 1);
 	}
+	return (len + printf_put_many(fd, -data->min_width - 1, ' '));
 }

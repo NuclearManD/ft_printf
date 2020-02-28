@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 CC=gcc
-CFLAGS=-Wall -Wextra -Werror -O3 -I. -c
+CFLAGS=-Wall -Wextra -Werror -I. -c -g
 NAME=libftprintf.a
 OBJ=$(SRC:.c=.o)
 SRC=	ft_printf.c \

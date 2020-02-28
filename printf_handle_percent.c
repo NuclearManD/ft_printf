@@ -83,6 +83,7 @@ void			scan_nums(const char **fmtp, int *min_width, int *precision)
 	if (**fmtp == '.')
 	{
 		*precision = 0;
+		(*fmtp)++;
 		while ((**fmtp <= '9') && (**fmtp >= '0'))
 			*precision = ((*precision) * 10) + *((*fmtp)++) - '0';
 	}
@@ -102,6 +103,7 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
 	t_fmt_data data;
 
+	data.precision = 0;
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));
 	data.flags = handle_flags_set_1(fmtp);

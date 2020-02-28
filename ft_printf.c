@@ -54,10 +54,6 @@ int				ft_fprintfv(int fd, const char *fmt, va_list args)
 		{
 			size += write(fd, fmt, i);
 			fmt += i + 1;
-			//write(1, "\n'", 2);
-			//write(1, fmt, 3);
-			//write(1, "'\n", 2);
-			//return (0);
 			size += printf_handle_percent(&fmt, fd, args);
 			i = 0;
 			fmt++;
