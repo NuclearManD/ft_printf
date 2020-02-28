@@ -27,8 +27,6 @@ static unsigned	handle_flags_set_1(const char **fmtp)
 			out |= FLAG_SPCE;
 		else if (**fmtp == '0' && !(out & FLAG_ZERO))
 			out |= FLAG_ZERO;
-		else if (**fmtp == '-' && !(out & FLAG_MINUS))
-			out |= FLAG_MINUS;
 		else if (**fmtp == '+' && !(out & FLAG_PLUS))
 			out |= FLAG_PLUS;
 		else
