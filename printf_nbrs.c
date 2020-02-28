@@ -15,24 +15,22 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-static int	wr_digit(int fd, int d, char use_caps)
-{
-	if (use_caps)
-		return (write(fd, &("0123456789ABCDEF"[d]), 1));
-	return (write(fd, &("0123456789abcdef"[d]), 1));
-}
-
 static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
 {
 	int i;
+	int d;
 
+	i = 0;
 	if (nb < (unsigned char)base)
-		return (wr_digit(fd, nb, caps));
+		d = nb;
 	else
 	{
 		i = rec_pn_base(fd, nb / base, base, caps);
-		return (i + wr_digit(fd, nb % base, caps));
+		d = nb % base;
 	}
+	if (caps)
+		return (i + write(fd, &("0123456789ABCDEF"[d]), 1));
+	return (i + write(fd, &("0123456789abcdef"[d]), 1));
 }
 
 static int	putnbr_base(int fd, uintmax_t nb, char base, char caps)
@@ -66,33 +64,47 @@ static int	get_num_len(uintmax_t num, char base, t_fmt_data *data)
 	return (len);
 }
 
-int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
+uintmax_t	pullnum(int type, va_list args)
 {
-	int					len;
 	uintmax_t			num;
-	char				base;
 
-	if (data->type == MOD_UNSPECIFIED)
+	if (type == MOD_UNSPECIFIED)
 		num = va_arg(args, unsigned int);
-	else if (data->type == MOD_CHAR)
+	else if (type == MOD_CHAR)
 		num = va_arg(args, unsigned int) & 255;
-	else if (data->type == MOD_SHORT)
+	else if (type == MOD_SHORT)
 		num = va_arg(args, unsigned int) & 65335;
-	else if (data->type == MOD_LONG)
+	else if (type == MOD_LONG)
 		num = va_arg(args, unsigned long);
-	else if (data->type == MOD_LONG_LONG)
+	else if (type == MOD_LONG_LONG)
 		num = va_arg(args, unsigned long long);
-	else if (data->type == MOD_INTMAX_T)
+	else if (type == MOD_INTMAX_T)
 		num = va_arg(args, intmax_t);
 	else
 		num = va_arg(args, size_t);
+	return (num);
+}
+
+int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
+{
+	int					len;
+	int					i;
+	uintmax_t			num;
+	char				base;
+
+	num = pullnum(data->type, args);
 	if (data->cnvrt == 'd' || data->cnvrt == 'i' || data->cnvrt == 'u')
 		base = 10;
 	if (data->cnvrt == 'o')
 		base = 8;
 	if (data->cnvrt == 'x' || data->cnvrt == 'X')
 		base = 16;
-	len = printf_fill(fd, get_num_len(num, base, data), data);
+	i = get_num_len(num, base, data);
+	len = i;
+	if (data->precision > i)
+		len = data->precision;
+	len = printf_fill(fd, len, data);
+	len += printf_put_many(fd, data->precision - i, '0');
 	len += putnbr_base(fd, num, base, data->cnvrt == 'X');
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));
 }
