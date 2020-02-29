@@ -23,14 +23,34 @@ int			printf_put_many(int fd, int sz, char c)
 	return (res);
 }
 
+int			printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero)
+{
+	int size_out;
+	int i;
+
+	i = dlen;
+	if (f->precision > i)
+		i = f->precision;
+	size_out = printf_fill(fd, dlen, f);
+	if (!is_zero && f->cnvrt == 'x' && (f->flags & FLAG_POUND))
+		size_out += write(fd, "0x", 2);
+	else if (!is_zero && f->cnvrt == 'X' && (f->flags & FLAG_POUND))
+		size_out += write(fd, "0X", 2);
+	if (f->precision)
+		size_out += printf_put_many(fd, f->precision - dlen, '0');
+	else if ((f->flags & (FLAG_ZERO | FLAG_MINUS)) == FLAG_ZERO)
+		size_out += printf_put_many(fd, f->min_width - size_out - i, '0');
+	return (size_out);
+}
+
 int			printf_fill(int fd, int dlen, t_fmt_data *f)
 {
 	int size;
 
 	size = 0;
-	/*if ((f->flags & (FLAG_ZERO | FLAG_MINUS)) == FLAG_ZERO && !(f->precision))
-		size += printf_put_many(fd, f->min_width - size - dlen, '0');
-	else */if (f->min_width > 0)
+	if ((f->flags & (FLAG_ZERO | FLAG_MINUS)) == FLAG_ZERO && !(f->precision))
+		;
+	else if (f->min_width > 0)
 		size += printf_put_many(fd, f->min_width - size - dlen, ' ');
 	return (size);
 }

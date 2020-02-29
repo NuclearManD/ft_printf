@@ -102,15 +102,7 @@ int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
 	if (data->cnvrt == 'x' || data->cnvrt == 'X')
 		base = 16;
 	i = get_num_len(num, base, data);
-	len = i;
-	if (data->precision > i)
-		len = data->precision;
-	len = printf_fill(fd, len, data);
-	if (num != 0 && data->cnvrt == 'x' && (data->flags & FLAG_POUND))
-		len += write(fd, "0x", 2);
-	else if (num != 0 && data->cnvrt == 'X' && (data->flags & FLAG_POUND))
-		len += write(fd, "0X", 2);
-	len += printf_put_many(fd, data->precision - i, '0');
+	len = printf_num_fill(fd, i, data, num == 0);
 	len += putnbr_base(fd, num, base, data->cnvrt == 'X');
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));
 }

@@ -49,5 +49,6 @@ int				printf_handle_number(int fd, va_list args, t_fmt_data *data);
 int				printf_handle_string(int fd, va_list args, t_fmt_data *data);
 int				printf_fill(int fd, int dlen, t_fmt_data *f);
 int				printf_put_many(int fd, int sz, char c);
+int				printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero);
 
 #endif
