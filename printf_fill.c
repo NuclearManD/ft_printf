@@ -36,6 +36,8 @@ int			printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero)
 		size_out += write(fd, "0x", 2);
 	else if (!is_zero && f->cnvrt == 'X' && (f->flags & FLAG_POUND))
 		size_out += write(fd, "0X", 2);
+	else if (f->cnvrt == 'o' && (f->flags & FLAG_POUND))
+		size_out += write(fd, "0", 1);
 	if (f->precision > 0)
 		size_out += printf_put_many(fd, f->precision - dlen, '0');
 	else if ((f->flags & (FLAG_ZERO | FLAG_MINUS)) == FLAG_ZERO)

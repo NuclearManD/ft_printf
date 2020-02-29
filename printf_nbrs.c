@@ -62,6 +62,8 @@ static int	get_num_len(uintmax_t num, char base, t_fmt_data *data)
 	{
 		if ((data->cnvrt | 32) == 'x' && num != 0)
 			len += 2;
+		else if (data->cnvrt == 'o')
+			len++;
 	}
 	while (num != 0)
 	{
