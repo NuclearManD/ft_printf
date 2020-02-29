@@ -15,7 +15,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
+static int	rec_pn_base(int fd, intmax_t nb, char base, char caps)
 {
 	int i;
 	int d;
@@ -33,29 +33,36 @@ static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
 	return (i + write(fd, &("0123456789abcdef"[d]), 1));
 }
 
-static int	putnbr_base(int fd, uintmax_t nb, char base, char caps)
+static int	putnbr_base(int fd, intmax_t n, char base, char caps, t_fmt_d *f)
 {
 	int i;
 
-	/*if (nb < 0)
+	if (n < 0)
 	{
 		i = write(fd, "-", 1);
-		if (-nb >= base)
-			i += rec_pn_base(fd, -(nb / base), base, caps);
-		i += wr_digit(fd, nb % base, caps);
+		if (-n >= base)
+			i += rec_pn_base(fd, -(n / base), base, caps);
+		i += rec_pn_base(fd, n % base, base, caps);
 	}
-	else*/
-		i = rec_pn_base(fd, nb, base, caps);
+	else
+	{
+		i = 0;
+		if (f->flags & FLAG_PLUS && base == 10)
+			i = write(fd, "+", 1);
+		else if (f->flags & FLAG_SPCE && base == 10)
+			i = write(fd, " ", 1);
+		i += rec_pn_base(fd, n, base, caps);
+	}
 	return (i);
 }
 
-static int	get_num_len(uintmax_t num, char base, t_fmt_data *data)
+static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 {
 	int len;
 
 	if (data->precision <= 0 && num == 0)
 		return (0);
-	len = /*num < 0 ||*/ (data->flags & (FLAG_PLUS | FLAG_SPCE));
+	len = num < 0 || (data->flags & (FLAG_PLUS | FLAG_SPCE));
 	if (num == 0)
 		len++;
 	if (data->flags & FLAG_POUND)
@@ -73,9 +80,9 @@ static int	get_num_len(uintmax_t num, char base, t_fmt_data *data)
 	return (len);
 }
 
-uintmax_t	pullnum(int type, va_list args)
+intmax_t	pullnum(int type, va_list args)
 {
-	uintmax_t			num;
+	intmax_t			num;
 
 	if (type == MOD_UNSPECIFIED)
 		num = va_arg(args, unsigned int);
@@ -94,11 +101,11 @@ uintmax_t	pullnum(int type, va_list args)
 	return (num);
 }
 
-int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
+int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
 {
 	int					len;
 	int					i;
-	uintmax_t			num;
+	intmax_t			num;
 	char				base;
 
 	num = pullnum(data->type, args);
@@ -111,6 +118,6 @@ int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
 	i = get_num_len(num, base, data);
 	len = printf_num_fill(fd, i, data, num == 0);
 	if (data->precision != 0 || num != 0)
-		len += putnbr_base(fd, num, base, data->cnvrt == 'X');
+		len += putnbr_base(fd, num, base, data->cnvrt == 'X', data);
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));
 }

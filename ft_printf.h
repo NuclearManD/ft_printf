@@ -29,26 +29,26 @@
 # define MOD_INTMAX_T 5
 # define MOD_SIZE_T 6
 
-typedef struct	s_fmt_data {
+typedef struct	s_fmt_d {
 	unsigned int	flags;
 	char			type;
 	int				min_width;
 	int				precision;
 	char			cnvrt;
-}				t_fmt_data;
+}				t_fmt_d;
 
 int				ft_printf(const char *fmt, ...);
 int				ft_fprintf(int fd, const char *fmt, ...);
 int				ft_printfv(const char *fmt, va_list args);
 int				ft_fprintfv(int fd, const char *fmt, va_list args);
-int				printf_handle_char(int fd, va_list args, t_fmt_data *data);
+int				printf_handle_char(int fd, va_list args, t_fmt_d *data);
 void			scan_nums(const char **fmtp, int *min_width, int *precision);
 char			in_str(char c, const char *s);
 int				printf_handle_percent(const char **fmtp, int fd, va_list args);
-int				printf_handle_number(int fd, va_list args, t_fmt_data *data);
-int				printf_handle_string(int fd, va_list args, t_fmt_data *data);
-int				printf_fill(int fd, int dlen, t_fmt_data *f);
+int				printf_handle_number(int fd, va_list args, t_fmt_d *data);
+int				printf_handle_string(int fd, va_list args, t_fmt_d *data);
+int				printf_fill(int fd, int dlen, t_fmt_d *f);
 int				printf_put_many(int fd, int sz, char c);
-int				printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero);
+int				printf_num_fill(int fd, int dlen, t_fmt_d *f, int is_zero);
 
 #endif

@@ -99,7 +99,7 @@ char			in_str(char c, const char *s)
 
 int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
-	t_fmt_data data;
+	t_fmt_d data;
 
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));

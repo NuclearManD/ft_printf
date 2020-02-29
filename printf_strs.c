@@ -15,7 +15,7 @@
 #include <stdarg.h>
 #include <wchar.h>
 
-int			printf_handle_string(int fd, va_list args, t_fmt_data *data)
+int			printf_handle_string(int fd, va_list args, t_fmt_d *data)
 {
 	const char	*str;
 	wchar_t		*wstr;

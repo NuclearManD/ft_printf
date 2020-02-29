@@ -23,7 +23,7 @@ int			printf_put_many(int fd, int sz, char c)
 	return (res);
 }
 
-int			printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero)
+int			printf_num_fill(int fd, int dlen, t_fmt_d *f, int is_zero)
 {
 	int size_out;
 	int i;
@@ -45,7 +45,7 @@ int			printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero)
 	return (size_out);
 }
 
-int			printf_fill(int fd, int dlen, t_fmt_data *f)
+int			printf_fill(int fd, int dlen, t_fmt_d *f)
 {
 	int size;
 

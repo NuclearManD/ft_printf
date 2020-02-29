@@ -15,7 +15,7 @@
 #include <stdarg.h>
 #include <wchar.h>
 
-int			printf_handle_char(int fd, va_list args, t_fmt_data *data)
+int			printf_handle_char(int fd, va_list args, t_fmt_d *data)
 {
 	char	c;
 	wint_t	wc;
