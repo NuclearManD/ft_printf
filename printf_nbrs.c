@@ -108,7 +108,7 @@ int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
 		base = 16;
 	i = get_num_len(num, base, data);
 	len = printf_num_fill(fd, i, data, num == 0);
-	//if (data->precision > 0 || num != 0)
+	if (data->precision != 0 || num != 0)
 		len += putnbr_base(fd, num, base, data->cnvrt == 'X');
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));
 }

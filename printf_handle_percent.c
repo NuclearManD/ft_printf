@@ -86,7 +86,7 @@ void			scan_nums(const char **fmtp, int *min_width, int *precision)
 			*precision = ((*precision) * 10) + *((*fmtp)++) - '0';
 	}
 	else
-		*precision = 0;
+		*precision = -1;
 }
 
 char			in_str(char c, const char *s)
