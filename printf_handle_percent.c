@@ -21,13 +21,13 @@ static unsigned	handle_flags_set_1(const char **fmtp)
 	out = 0;
 	while (**fmtp)
 	{
-		if (**fmtp == '#' && !(out & FLAG_POUND))
+		if (**fmtp == '#')
 			out |= FLAG_POUND;
-		else if (**fmtp == ' ' && !(out & FLAG_SPCE))
+		else if (**fmtp == ' ')
 			out |= FLAG_SPCE;
-		else if (**fmtp == '0' && !(out & FLAG_ZERO))
+		else if (**fmtp == '0')
 			out |= FLAG_ZERO;
-		else if (**fmtp == '+' && !(out & FLAG_PLUS))
+		else if (**fmtp == '+')
 			out |= FLAG_PLUS;
 		else
 			break ;
