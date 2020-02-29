@@ -31,7 +31,7 @@ int			printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero)
 	i = dlen;
 	if (f->precision > i)
 		i = f->precision;
-	size_out = printf_fill(fd, dlen, f);
+	size_out = printf_fill(fd, i, f);
 	if (!is_zero && f->cnvrt == 'x' && (f->flags & FLAG_POUND))
 		size_out += write(fd, "0x", 2);
 	else if (!is_zero && f->cnvrt == 'X' && (f->flags & FLAG_POUND))
