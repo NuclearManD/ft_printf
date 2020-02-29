@@ -29,6 +29,8 @@
 # define MOD_INTMAX_T 5
 # define MOD_SIZE_T 6
 
+# define UNSIGNED_FLAG_MASK (FLAG_POUND | FLAG_ZERO | FLAG_MINUS)
+
 typedef struct	s_fmt_d {
 	unsigned int	flags;
 	char			type;

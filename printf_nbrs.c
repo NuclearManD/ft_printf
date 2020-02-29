@@ -108,13 +108,15 @@ int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
 	intmax_t			num;
 	char				base;
 
-	num = pullnum(data->type, args);
 	if (data->cnvrt == 'd' || data->cnvrt == 'i' || data->cnvrt == 'u')
 		base = 10;
 	if (data->cnvrt == 'o')
 		base = 8;
 	if (data->cnvrt == 'x' || data->cnvrt == 'X')
 		base = 16;
+	if (base != 10 || data->cnvrt == 'u')
+		data->flags &= UNSIGNED_FLAG_MASK;
+	num = pullnum(data->type, args);
 	i = get_num_len(num, base, data);
 	len = printf_num_fill(fd, i, data, num == 0);
 	if (data->precision != 0 || num != 0)
