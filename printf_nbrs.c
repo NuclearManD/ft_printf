@@ -53,16 +53,21 @@ static int	get_num_len(uintmax_t num, char base, t_fmt_data *data)
 {
 	int len;
 
+	if (data->precision <= 0 && num == 0)
+		return (0);
 	len = /*num < 0 ||*/ (data->flags & (FLAG_PLUS | FLAG_SPCE));
 	if (num == 0)
 		len++;
+	if (data->flags & FLAG_POUND)
+	{
+		if ((data->cnvrt | 32) == 'x' && num != 0)
+			len += 2;
+	}
 	while (num != 0)
 	{
 		num = num / base;
 		len++;
 	}
-	if ((data->cnvrt | 32) == 'x' && (data->flags & FLAG_POUND) && num != 0)
-		len += 2;
 	return (len);
 }
 
@@ -103,6 +108,7 @@ int			printf_handle_number(int fd, va_list args, t_fmt_data *data)
 		base = 16;
 	i = get_num_len(num, base, data);
 	len = printf_num_fill(fd, i, data, num == 0);
-	len += putnbr_base(fd, num, base, data->cnvrt == 'X');
+	//if (data->precision > 0 || num != 0)
+		len += putnbr_base(fd, num, base, data->cnvrt == 'X');
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));
 }

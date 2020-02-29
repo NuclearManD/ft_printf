@@ -39,7 +39,7 @@ int			printf_num_fill(int fd, int dlen, t_fmt_data *f, int is_zero)
 	if (f->precision)
 		size_out += printf_put_many(fd, f->precision - dlen, '0');
 	else if ((f->flags & (FLAG_ZERO | FLAG_MINUS)) == FLAG_ZERO)
-		size_out += printf_put_many(fd, f->min_width - size_out - i, '0');
+		size_out += printf_put_many(fd, f->min_width - i, '0');
 	return (size_out);
 }
 
