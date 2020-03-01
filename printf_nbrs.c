@@ -15,7 +15,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-static int	rec_pn_base(int fd, intmax_t nb, char base, char caps)
+static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
 {
 	int i;
 	int d;
@@ -37,7 +37,7 @@ static int	putnbr_base(int fd, intmax_t n, char base, char caps, t_fmt_d *f)
 {
 	int i;
 
-	if (n < 0)
+	if (n < 0 && base == 10 && f->cnvrt != 'u')
 	{
 		i = write(fd, "-", 1);
 		if (-n >= base)
@@ -62,7 +62,9 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 
 	if (data->precision <= 0 && num == 0)
 		return (0);
-	len = num < 0 || (data->flags & (FLAG_PLUS | FLAG_SPCE));
+	len = (num < 0 && base == 10) || (data->flags & (FLAG_PLUS | FLAG_SPCE));
+	if (data->cnvrt == 'u')
+		len = 0;
 	if (num == 0)
 		len++;
 	if (data->flags & FLAG_POUND)
