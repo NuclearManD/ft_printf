@@ -82,25 +82,32 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 	return (len);
 }
 
-intmax_t	pullnum(int type, va_list args)
+intmax_t	pullnum(int type, va_list args, int is_unsigned)
 {
-	intmax_t			num;
-
-	if (type == MOD_UNSPECIFIED)
-		num = va_arg(args, unsigned int);
-	else if (type == MOD_CHAR)
-		num = va_arg(args, unsigned int) & 255;
-	else if (type == MOD_SHORT)
-		num = va_arg(args, unsigned int) & 65335;
-	else if (type == MOD_LONG)
-		num = va_arg(args, unsigned long);
-	else if (type == MOD_LONG_LONG)
-		num = va_arg(args, unsigned long long);
+	if (type == MOD_UNSPECIFIED && is_unsigned)
+		return (va_arg(args, unsigned int));
+	else if (type == MOD_UNSPECIFIED && !is_unsigned)
+		return ((intmax_t)va_arg(args, int));
+	else if (type == MOD_CHAR && is_unsigned)
+		return (va_arg(args, unsigned int) & 255);
+	else if (type == MOD_CHAR && !is_unsigned)
+		return ((char)(va_arg(args, unsigned int) & 255));
+	else if (type == MOD_SHORT && is_unsigned)
+		return (va_arg(args, unsigned int) & 65335);
+	else if (type == MOD_SHORT && !is_unsigned)
+		return ((short)(va_arg(args, unsigned int) & 65335));
+	else if (type == MOD_LONG && is_unsigned)
+		return (va_arg(args, unsigned long));
+	else if (type == MOD_LONG && !is_unsigned)
+		return (va_arg(args, long));
+	else if (type == MOD_LONG_LONG && is_unsigned)
+		return (va_arg(args, unsigned long long));
+	else if (type == MOD_LONG_LONG && !is_unsigned)
+		return (va_arg(args, long long));
 	else if (type == MOD_INTMAX_T)
-		num = va_arg(args, intmax_t);
+		return (va_arg(args, intmax_t));
 	else
-		num = va_arg(args, size_t);
-	return (num);
+		return (va_arg(args, size_t));
 }
 
 int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
@@ -118,7 +125,7 @@ int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
 		base = 16;
 	if (base != 10 || data->cnvrt == 'u')
 		data->flags &= UNSIGNED_FLAG_MASK;
-	num = pullnum(data->type, args);
+	num = pullnum(data->type, args, base != 10 || data->cnvrt == 'u');
 	i = get_num_len(num, base, data);
 	len = printf_num_fill(fd, i, data, num == 0);
 	if (data->precision != 0 || num != 0)

@@ -29,6 +29,8 @@ static unsigned	handle_flags_set_1(const char **fmtp)
 			out |= FLAG_ZERO;
 		else if (**fmtp == '+')
 			out |= FLAG_PLUS;
+		else if (**fmtp == '-')
+			out |= FLAG_MINUS;
 		else
 			break ;
 		(*fmtp)++;
@@ -68,25 +70,22 @@ static char		handle_length_mod(const char **fmtp)
 ** Scan width and precision bro :dab:
 */
 
-void			scan_nums(const char **fmtp, int *min_width, int *precision)
+static void		scan_nums(const char **fmtp, int *minwid, int *prec, int isneg)
 {
-	int isneg;
-
-	*min_width = 0;
-	isneg = 1 - 2 * (**fmtp == '-');
-	if (**fmtp == '-' || **fmtp == '+')
+	*minwid = 0;
+	if (**fmtp == '+')
 		(*fmtp)++;
 	while ((**fmtp <= '9') && (**fmtp >= '0'))
-		*min_width = ((*min_width) * 10) + isneg * (*((*fmtp)++) - '0');
+		*minwid = ((*minwid) * 10) + isneg * (*((*fmtp)++) - '0');
 	if (**fmtp == '.')
 	{
-		*precision = 0;
+		*prec = 0;
 		(*fmtp)++;
 		while ((**fmtp <= '9') && (**fmtp >= '0'))
-			*precision = ((*precision) * 10) + *((*fmtp)++) - '0';
+			*prec = ((*prec) * 10) + *((*fmtp)++) - '0';
 	}
 	else
-		*precision = -1;
+		*prec = -1;
 }
 
 char			in_str(char c, const char *s)
@@ -100,11 +99,15 @@ char			in_str(char c, const char *s)
 int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 {
 	t_fmt_d data;
+	int		isneg;
 
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));
 	data.flags = handle_flags_set_1(fmtp);
-	scan_nums(fmtp, &data.min_width, &data.precision);
+	isneg = 1;
+	if (data.flags & FLAG_MINUS)
+		isneg = -1;
+	scan_nums(fmtp, &data.min_width, &data.precision, isneg);
 	data.type = handle_length_mod(fmtp);
 	data.cnvrt = **fmtp;
 	if (data.cnvrt == 'D' || data.cnvrt == 'O' || data.cnvrt == 'U')
