@@ -42,11 +42,12 @@ int			printf_num_fill(int fd, int dlen, t_fmt_d *f, intmax_t num, int b)
 		else if (f->flags & FLAG_SPCE)
 			size_out += write(fd, " ", 1);
 	}
-	if (num != 0 && f->cnvrt == 'x' && (f->flags & FLAG_POUND))
+	if ((num != 0 && f->cnvrt == 'x' && (f->flags & FLAG_POUND))
+		|| f->cnvrt == 'p')
 		size_out += write(fd, "0x", 2);
 	else if (num != 0 && f->cnvrt == 'X' && (f->flags & FLAG_POUND))
 		size_out += write(fd, "0X", 2);
-	else if (f->cnvrt == 'o' && (f->flags & FLAG_POUND))
+	else if (f->cnvrt == 'o' && (f->flags & FLAG_POUND) && (num != 0))
 		size_out += write(fd, "0", 1);
 	if (f->precision > 0)
 		size_out += printf_put_many(fd, f->precision - dlen, '0');

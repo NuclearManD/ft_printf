@@ -56,18 +56,19 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 {
 	int len;
 
-	if (data->precision <= 0 && num == 0)
-		return (0);
+	if (data->precision <= 0 && num == 0 && (data->flags & FLAG_POUND) == 0)
+		if (!in_str(data->cnvrt, "poOxX"))
+			return ((data->flags & (FLAG_PLUS | FLAG_SPCE)) != 0);
 	len = (num < 0 && base == 10) || (data->flags & (FLAG_PLUS | FLAG_SPCE));
 	if (data->cnvrt == 'u')
 		len = 0;
 	if (num == 0)
 		len++;
-	if (data->flags & FLAG_POUND)
+	if (data->flags & FLAG_POUND || data->cnvrt == 'p')
 	{
-		if ((data->cnvrt | 32) == 'x' && num != 0)
+		if (((data->cnvrt | 32) == 'x' && num != 0) || data->cnvrt == 'p')
 			len += 2;
-		else if (data->cnvrt == 'o')
+		else if (data->cnvrt == 'o' && num != 0)
 			len++;
 	}
 	while (num != 0)
@@ -117,14 +118,14 @@ int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
 		base = 10;
 	if (data->cnvrt == 'o')
 		base = 8;
-	if (data->cnvrt == 'x' || data->cnvrt == 'X')
+	if (data->cnvrt == 'x' || data->cnvrt == 'X' || data->cnvrt == 'p')
 		base = 16;
 	if (base != 10 || data->cnvrt == 'u')
 		data->flags &= UNSIGNED_FLAG_MASK;
 	num = pullnum(data->type, args, base != 10 || data->cnvrt == 'u');
 	i = get_num_len(num, base, data);
 	len = printf_num_fill(fd, i, data, num, base);
-	if (data->precision != 0 || num != 0)
+	if (data->precision > 0 || num != 0 || in_str(data->cnvrt, "poOxX"))
 		len += putnbr_base(fd, num, base, data->cnvrt == 'X', data);
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));
 }
