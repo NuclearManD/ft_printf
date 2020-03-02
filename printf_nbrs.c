@@ -39,19 +39,15 @@ static int	putnbr_base(int fd, intmax_t n, char base, char caps, t_fmt_d *f)
 
 	if (n < 0 && base == 10 && f->cnvrt != 'u')
 	{
-		i = write(fd, "-", 1);
 		if (-n >= base)
-			i += rec_pn_base(fd, -(n / base), base, caps);
-		i += rec_pn_base(fd, n % base, base, caps);
+			i = rec_pn_base(fd, -(n / base), base, caps);
+		else
+			i = 0;
+		i += rec_pn_base(fd, (-n) % base, base, caps);
 	}
 	else
 	{
-		i = 0;
-		if (f->flags & FLAG_PLUS && base == 10)
-			i = write(fd, "+", 1);
-		else if (f->flags & FLAG_SPCE && base == 10)
-			i = write(fd, " ", 1);
-		i += rec_pn_base(fd, n, base, caps);
+		i = rec_pn_base(fd, n, base, caps);
 	}
 	return (i);
 }
@@ -127,7 +123,7 @@ int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
 		data->flags &= UNSIGNED_FLAG_MASK;
 	num = pullnum(data->type, args, base != 10 || data->cnvrt == 'u');
 	i = get_num_len(num, base, data);
-	len = printf_num_fill(fd, i, data, num == 0);
+	len = printf_num_fill(fd, i, data, num, base);
 	if (data->precision != 0 || num != 0)
 		len += putnbr_base(fd, num, base, data->cnvrt == 'X', data);
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));

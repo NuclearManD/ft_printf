@@ -14,6 +14,7 @@
 # define FT_PRINTF_H
 
 # include <stdarg.h>
+# include <stdint.h>
 
 # define FLAG_POUND 1
 # define FLAG_ZERO 2
@@ -31,6 +32,7 @@
 
 # define UNSIGNED_FLAG_MASK (FLAG_POUND | FLAG_ZERO | FLAG_MINUS)
 
+
 typedef struct	s_fmt_d {
 	unsigned int	flags;
 	char			type;
@@ -44,13 +46,13 @@ int				ft_fprintf(int fd, const char *fmt, ...);
 int				ft_printfv(const char *fmt, va_list args);
 int				ft_fprintfv(int fd, const char *fmt, va_list args);
 int				printf_handle_char(int fd, va_list args, t_fmt_d *data);
-//void			scan_nums(const char **fmtp, int *min_width, int *precision);
+
 char			in_str(char c, const char *s);
 int				printf_handle_percent(const char **fmtp, int fd, va_list args);
 int				printf_handle_number(int fd, va_list args, t_fmt_d *data);
 int				printf_handle_string(int fd, va_list args, t_fmt_d *data);
 int				printf_fill(int fd, int dlen, t_fmt_d *f);
 int				printf_put_many(int fd, int sz, char c);
-int				printf_num_fill(int fd, int dlen, t_fmt_d *f, int is_zero);
+int				printf_num_fill(int fd, int ln, t_fmt_d *f, intmax_t n, int b);
 
 #endif

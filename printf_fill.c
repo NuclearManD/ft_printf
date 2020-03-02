@@ -12,6 +12,7 @@
 
 #include "ft_printf.h"
 #include "unistd.h"
+#include <stdint.h>
 
 int			printf_put_many(int fd, int sz, char c)
 {
@@ -23,7 +24,7 @@ int			printf_put_many(int fd, int sz, char c)
 	return (res);
 }
 
-int			printf_num_fill(int fd, int dlen, t_fmt_d *f, int is_zero)
+int			printf_num_fill(int fd, int dlen, t_fmt_d *f, intmax_t num, int b)
 {
 	int size_out;
 	int i;
@@ -32,9 +33,18 @@ int			printf_num_fill(int fd, int dlen, t_fmt_d *f, int is_zero)
 	if (f->precision > i)
 		i = f->precision;
 	size_out = printf_fill(fd, i, f);
-	if (!is_zero && f->cnvrt == 'x' && (f->flags & FLAG_POUND))
+	if (b == 10 && f->cnvrt != 'u')
+	{
+		if (num < 0)
+			size_out += write(fd, "-", 1);
+		else if (f->flags & FLAG_PLUS)
+			size_out += write(fd, "+", 1);
+		else if (f->flags & FLAG_SPCE)
+			size_out += write(fd, " ", 1);
+	}
+	if (num != 0 && f->cnvrt == 'x' && (f->flags & FLAG_POUND))
 		size_out += write(fd, "0x", 2);
-	else if (!is_zero && f->cnvrt == 'X' && (f->flags & FLAG_POUND))
+	else if (num != 0 && f->cnvrt == 'X' && (f->flags & FLAG_POUND))
 		size_out += write(fd, "0X", 2);
 	else if (f->cnvrt == 'o' && (f->flags & FLAG_POUND))
 		size_out += write(fd, "0", 1);
