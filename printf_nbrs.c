@@ -39,11 +39,11 @@ static int	putnbr_base(int fd, intmax_t n, char base, char caps, t_fmt_d *f)
 
 	if (n < 0 && base == 10 && f->cnvrt != 'u')
 	{
-		if (-n >= base)
+		if (n <= -base)
 			i = rec_pn_base(fd, -(n / base), base, caps);
 		else
 			i = 0;
-		i += rec_pn_base(fd, (-n) % base, base, caps);
+		i += rec_pn_base(fd, -(n % base), base, caps);
 	}
 	else
 	{
