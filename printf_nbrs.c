@@ -56,8 +56,7 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 {
 	int len;
 
-	if (data->precision <= 0 && num == 0 && (data->flags & FLAG_POUND) == 0)
-		if (!in_str(data->cnvrt, "poOxX"))
+	if (data->precision == 0 && num == 0)
 			return ((data->flags & (FLAG_PLUS | FLAG_SPCE)) != 0);
 	len = (num < 0 && base == 10) || (data->flags & (FLAG_PLUS | FLAG_SPCE));
 	if (data->cnvrt == 'u')
@@ -125,7 +124,7 @@ int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
 	num = pullnum(data->type, args, base != 10 || data->cnvrt == 'u');
 	i = get_num_len(num, base, data);
 	len = printf_num_fill(fd, i, data, num, base);
-	if (data->precision > 0 || num != 0 || in_str(data->cnvrt, "poOxX"))
+	if (data->precision != 0 || num != 0 || data->cnvrt == 'p')
 		len += putnbr_base(fd, num, base, data->cnvrt == 'X', data);
 	return (len + printf_put_many(fd, -data->min_width - len, ' '));
 }
