@@ -89,9 +89,9 @@ intmax_t	pullnum(int type, va_list args, int is_unsigned)
 	else if (type == MOD_CHAR && !is_unsigned)
 		return ((char)(va_arg(args, unsigned int) & 255));
 	else if (type == MOD_SHORT && is_unsigned)
-		return (va_arg(args, unsigned int) & 65335);
+		return (va_arg(args, unsigned int) & 65535);
 	else if (type == MOD_SHORT && !is_unsigned)
-		return ((short)(va_arg(args, unsigned int) & 65335));
+		return ((short)(va_arg(args, unsigned int) & 65535));
 	else if (type == MOD_LONG && is_unsigned)
 		return (va_arg(args, unsigned long));
 	else if (type == MOD_LONG && !is_unsigned)
