@@ -39,6 +39,7 @@ typedef struct	s_fmt_d {
 	int				precision;
 	char			cnvrt;
 	int				fd;
+	int				dlen;
 }				t_fmt_d;
 
 int				ft_printf(const char *fmt, ...);
@@ -53,6 +54,6 @@ int				printf_handle_number(va_list args, t_fmt_d *data);
 int				printf_handle_string(int fd, va_list args, t_fmt_d *data);
 int				printf_fill(int fd, int dlen, t_fmt_d *f);
 int				printf_put_many(int fd, int sz, char c);
-int				printf_num_fill(int ln, t_fmt_d *f, intmax_t n, int b);
+int				printf_num_fill(int *ln, t_fmt_d *f, intmax_t n, int b);
 
 #endif

@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <stdio.h>
 
 static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
 {
@@ -35,46 +36,63 @@ static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
 
 static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 {
-	int i;
+	int			i;
+	int			cnt;
+	intmax_t	tmp;
 
+	tmp = n;
+	cnt = 0;
+	while (tmp)
+	{
+		tmp = tmp / base;
+		cnt++;
+	}
+	i = printf_put_many(f->fd, f->dlen - cnt, '0');
 	if (n < 0 && base == 10 && f->cnvrt != 'u')
 	{
 		if (n <= -base)
-			i = rec_pn_base(f->fd, -(n / base), base, caps);
+			i += rec_pn_base(f->fd, -(n / base), base, caps);
 		else
-			i = 0;
+			i += 0;
 		i += rec_pn_base(f->fd, -(n % base), base, caps);
 	}
-	else
-	{
-		i = rec_pn_base(f->fd, n, base, caps);
-	}
+	else if (n > 0)
+		i += rec_pn_base(f->fd, n, base, caps);
 	return (i);
 }
+
+/*
+** Returns the expected length of the number, including all zeros,
+** prefixes, and signs.
+*/
 
 static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 {
 	int len;
+	int onum;
 
 	if (data->precision == 0 && num == 0)
-		return ((data->flags & (FLAG_PLUS | FLAG_SPCE)) != 0);
-	len = (num < 0 && base == 10) || (data->flags & (FLAG_PLUS | FLAG_SPCE));
-	if (data->cnvrt == 'u')
-		len = 0;
-	if (num == 0)
+		return (0);
+	len = 0;
+	if ((onum = num) == 0)
 		len++;
-	if (data->flags & FLAG_POUND || data->cnvrt == 'p')
-	{
-		if (((data->cnvrt | 32) == 'x' && num != 0) || data->cnvrt == 'p')
-			len += 2;
-		else if (data->cnvrt == 'o' && num != 0)
-			len++;
-	}
 	while (num != 0)
 	{
 		num = num / base;
 		len++;
 	}
+	if (len < data->precision)
+		len = data->precision;
+	len += ((onum < 0 && base == 10) || (data->flags & 24)) && data->cnvrt != 'u';
+	if (data->flags & FLAG_POUND || data->cnvrt == 'p')
+	{
+		if (((data->cnvrt | 32) == 'x' && onum != 0) || data->cnvrt == 'p')
+			len += 2;
+		else if (data->cnvrt == 'o' && onum != 0)
+			len++;
+	}
+	if (len < data->min_width && (data->flags & FLAG_ZERO))
+		len = data->min_width;
 	return (len);
 }
 
@@ -119,11 +137,14 @@ int			printf_handle_number(va_list args, t_fmt_d *data)
 		base = 8;
 	if (data->cnvrt == 'x' || data->cnvrt == 'X' || data->cnvrt == 'p')
 		base = 16;
+	if (data->precision != -1 && (data->flags & FLAG_ZERO))
+		data->flags ^= FLAG_ZERO;
 	if (base != 10 || data->cnvrt == 'u')
 		data->flags &= UNSIGNED_FLAG_MASK;
 	num = pullnum(data->type, args, base != 10 || data->cnvrt == 'u');
 	i = get_num_len(num, base, data);
-	len = printf_num_fill(i, data, num, base);
+	len = printf_num_fill(&i, data, num, base);
+	data->dlen = i;
 	if (data->precision != 0 || num != 0 || data->cnvrt == 'p')
 		len += putnbr_base(num, base, data->cnvrt == 'X', data);
 	return (len + printf_put_many(data->fd, -data->min_width - len, ' '));
