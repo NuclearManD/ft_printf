@@ -33,21 +33,21 @@ static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
 	return (i + write(fd, &("0123456789abcdef"[d]), 1));
 }
 
-static int	putnbr_base(int fd, intmax_t n, char base, char caps, t_fmt_d *f)
+static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 {
 	int i;
 
 	if (n < 0 && base == 10 && f->cnvrt != 'u')
 	{
 		if (n <= -base)
-			i = rec_pn_base(fd, -(n / base), base, caps);
+			i = rec_pn_base(f->fd, -(n / base), base, caps);
 		else
 			i = 0;
-		i += rec_pn_base(fd, -(n % base), base, caps);
+		i += rec_pn_base(f->fd, -(n % base), base, caps);
 	}
 	else
 	{
-		i = rec_pn_base(fd, n, base, caps);
+		i = rec_pn_base(f->fd, n, base, caps);
 	}
 	return (i);
 }
@@ -57,7 +57,7 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 	int len;
 
 	if (data->precision == 0 && num == 0)
-			return ((data->flags & (FLAG_PLUS | FLAG_SPCE)) != 0);
+		return ((data->flags & (FLAG_PLUS | FLAG_SPCE)) != 0);
 	len = (num < 0 && base == 10) || (data->flags & (FLAG_PLUS | FLAG_SPCE));
 	if (data->cnvrt == 'u')
 		len = 0;
@@ -106,7 +106,7 @@ intmax_t	pullnum(int type, va_list args, int is_unsigned)
 		return (va_arg(args, size_t));
 }
 
-int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
+int			printf_handle_number(va_list args, t_fmt_d *data)
 {
 	int					len;
 	int					i;
@@ -123,8 +123,8 @@ int			printf_handle_number(int fd, va_list args, t_fmt_d *data)
 		data->flags &= UNSIGNED_FLAG_MASK;
 	num = pullnum(data->type, args, base != 10 || data->cnvrt == 'u');
 	i = get_num_len(num, base, data);
-	len = printf_num_fill(fd, i, data, num, base);
+	len = printf_num_fill(i, data, num, base);
 	if (data->precision != 0 || num != 0 || data->cnvrt == 'p')
-		len += putnbr_base(fd, num, base, data->cnvrt == 'X', data);
-	return (len + printf_put_many(fd, -data->min_width - len, ' '));
+		len += putnbr_base(num, base, data->cnvrt == 'X', data);
+	return (len + printf_put_many(data->fd, -data->min_width - len, ' '));
 }

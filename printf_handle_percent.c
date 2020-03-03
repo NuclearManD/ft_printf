@@ -101,6 +101,7 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 	t_fmt_d	data;
 	int		isneg;
 
+	data.fd = fd;
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));
 	data.flags = handle_flags_set_1(fmtp);
@@ -109,8 +110,7 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 		isneg = -1;
 	scan_nums(fmtp, &data.min_width, &data.precision, isneg);
 	data.type = handle_length_mod(fmtp);
-	data.cnvrt = **fmtp;
-	if (data.cnvrt == 'p')
+	if ((data.cnvrt = **fmtp) == 'p')
 		data.type = MOD_LONG;
 	if (data.cnvrt == 'D' || data.cnvrt == 'O' || data.cnvrt == 'U')
 	{
@@ -120,7 +120,7 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 	if (data.cnvrt == 's' || data.cnvrt == 'S')
 		return (printf_handle_string(fd, args, &data));
 	else if (in_str(data.cnvrt, "pdDioOuUxX"))
-		return (printf_handle_number(fd, args, &data));
+		return (printf_handle_number(args, &data));
 	else
 		return (printf_handle_char(fd, args, &data));
 }
