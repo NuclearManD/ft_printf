@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdio.h>
 
 static int	rec_pn_base(int fd, uintmax_t nb, char base, char caps)
 {
@@ -38,8 +37,9 @@ static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 {
 	int			i;
 	int			cnt;
-	intmax_t	tmp;
+	//intmax_t	tmp;
 
+/*>>>>>>>>>>>>>>>>
 	tmp = n;
 	cnt = 0;
 	while (tmp)
@@ -47,6 +47,10 @@ static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 		tmp = tmp / base;
 		cnt++;
 	}
+//=================*/
+
+	cnt = nchar_abs(n, base, f);
+//<<<<<<<<<<<<<<<<<
 	i = printf_put_many(f->fd, f->dlen - cnt, '0');
 	if (n < 0 && base == 10 && f->cnvrt != 'u')
 	{
@@ -56,7 +60,7 @@ static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 			i += 0;
 		i += rec_pn_base(f->fd, -(n % base), base, caps);
 	}
-	else if (n > 0)
+	else// if (n > 0)
 		i += rec_pn_base(f->fd, n, base, caps);
 	return (i);
 }
@@ -68,27 +72,19 @@ static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 
 static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 {
-	int len;
-	int onum;
+	int			len;
 
 	if (data->precision == 0 && num == 0)
 		return (0);
-	len = 0;
-	if ((onum = num) == 0)
-		len++;
-	while (num != 0)
-	{
-		num = num / base;
-		len++;
-	}
+	len = nchar_abs(num, base, data);
 	if (len < data->precision)
 		len = data->precision;
-	len += ((onum < 0 && base == 10) || (data->flags & 24)) && data->cnvrt != 'u';
+	len += ((num < 0 && base == 10) || (data->flags & 24)) && data->cnvrt != 'u';
 	if (data->flags & FLAG_POUND || data->cnvrt == 'p')
 	{
-		if (((data->cnvrt | 32) == 'x' && onum != 0) || data->cnvrt == 'p')
+		if (((data->cnvrt | 32) == 'x' && num != 0) || data->cnvrt == 'p')
 			len += 2;
-		else if (data->cnvrt == 'o' && onum != 0)
+		else if (data->cnvrt == 'o' && num != 0)
 			len++;
 	}
 	if (len < data->min_width && (data->flags & FLAG_ZERO))

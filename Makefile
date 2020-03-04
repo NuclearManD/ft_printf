@@ -20,6 +20,7 @@ SRC=	ft_printf.c \
 		printf_handle_percent.c \
 		printf_nbrs.c \
 		printf_strs.c \
+		logtool.c
 
 
 $(NAME): 

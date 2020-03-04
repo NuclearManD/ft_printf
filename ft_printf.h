@@ -48,6 +48,7 @@ int				ft_printfv(const char *fmt, va_list args);
 int				ft_fprintfv(int fd, const char *fmt, va_list args);
 int				printf_handle_char(int fd, va_list args, t_fmt_d *data);
 
+int				nchar_abs(intmax_t val, int base, t_fmt_d *data);
 char			in_str(char c, const char *s);
 int				printf_handle_percent(const char **fmtp, int fd, va_list args);
 int				printf_handle_number(va_list args, t_fmt_d *data);
