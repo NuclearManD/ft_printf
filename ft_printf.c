@@ -56,7 +56,8 @@ int				ft_fprintfv(int fd, const char *fmt, va_list args)
 			fmt += i + 1;
 			size += printf_handle_percent(&fmt, fd, args);
 			i = 0;
-			fmt++;
+			if (*fmt != 0)
+				fmt++;
 		}
 		else
 			i++;
