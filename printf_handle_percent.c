@@ -105,9 +105,7 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 	if (**fmtp == '%')
 		return (write(fd, "%", 1));
 	data.flags = handle_flags_set_1(fmtp);
-	isneg = 1;
-	if (data.flags & FLAG_MINUS)
-		isneg = -1;
+	isneg = 1 - 2 * (!!(data.flags & FLAG_MINUS));
 	scan_nums(fmtp, &data.min_width, &data.precision, isneg);
 	data.type = handle_length_mod(fmtp);
 	if (**fmtp == 0)
