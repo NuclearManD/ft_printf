@@ -46,7 +46,8 @@ int			printf_num_fill(int *dlen, t_fmt_d *f, intmax_t num, int b)
 	else if (num != 0 && f->cnvrt == 'X' && (f->flags & FLAG_POUND))
 		size_out += write(f->fd, "0X", 2);
 	else if (f->cnvrt == 'o' && (f->flags & FLAG_POUND))
-		size_out += write(f->fd, "0", 1);
+		if (num != 0 || f->precision == 0)
+			size_out += write(f->fd, "0", 1);
 	*dlen -= size_out;
 	return (size_out + tmp);
 }
