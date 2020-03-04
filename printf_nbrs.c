@@ -37,20 +37,8 @@ static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 {
 	int			i;
 	int			cnt;
-	//intmax_t	tmp;
-
-/*>>>>>>>>>>>>>>>>
-	tmp = n;
-	cnt = 0;
-	while (tmp)
-	{
-		tmp = tmp / base;
-		cnt++;
-	}
-//=================*/
 
 	cnt = nchar_abs(n, base, f);
-//<<<<<<<<<<<<<<<<<
 	i = printf_put_many(f->fd, f->dlen - cnt, '0');
 	if (n < 0 && base == 10 && f->cnvrt != 'u')
 	{
@@ -60,7 +48,7 @@ static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 			i += 0;
 		i += rec_pn_base(f->fd, -(n % base), base, caps);
 	}
-	else// if (n > 0)
+	else
 		i += rec_pn_base(f->fd, n, base, caps);
 	return (i);
 }
@@ -79,7 +67,8 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 	len = nchar_abs(num, base, data);
 	if (len < data->precision)
 		len = data->precision;
-	len += ((num < 0 && base == 10) || (data->flags & 24)) && data->cnvrt != 'u';
+	if (((num < 0 && base == 10) || (data->flags & 24)) && data->cnvrt != 'u')
+		len++;
 	if (data->flags & FLAG_POUND || data->cnvrt == 'p')
 	{
 		if (((data->cnvrt | 32) == 'x' && num != 0) || data->cnvrt == 'p')
