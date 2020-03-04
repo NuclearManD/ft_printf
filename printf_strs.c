@@ -27,7 +27,7 @@ static int	wstr_handle(int fd, va_list args, t_fmt_d *data)
 	len = 0;
 	while (wstr[len])
 		len++;
-	if (data->precision > 0 && data->precision < len)
+	if (data->precision >= 0 && data->precision < len)
 		len = data->precision;
 	printed = printf_fill(fd, len, data);
 	printed += write(fd, wstr, len * sizeof(wchar_t));
@@ -49,7 +49,7 @@ int			printf_handle_string(int fd, va_list args, t_fmt_d *data)
 	len = 0;
 	while (str[len])
 		len++;
-	if (data->precision > 0 && data->precision < len)
+	if (data->precision >= 0 && data->precision < len)
 		len = data->precision;
 	printed = printf_fill(fd, len, data);
 	printed += write(fd, str, len);
