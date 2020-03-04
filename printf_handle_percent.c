@@ -110,6 +110,8 @@ int				printf_handle_percent(const char **fmtp, int fd, va_list args)
 		isneg = -1;
 	scan_nums(fmtp, &data.min_width, &data.precision, isneg);
 	data.type = handle_length_mod(fmtp);
+	if (**fmtp == 0)
+		return (0);
 	if ((data.cnvrt = **fmtp) == 'p')
 		data.type = MOD_LONG;
 	if (data.cnvrt == 'D' || data.cnvrt == 'O' || data.cnvrt == 'U')
