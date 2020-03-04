@@ -19,7 +19,7 @@ int				nchar_abs(intmax_t val, int base, t_fmt_d *data)
 	int			len;
 
 	len = 0;
-	if (val == 0)
+	if (val == 0 && data->precision != 0)
 		len++;
 	log = (uintmax_t)val;
 	if (val < 0 && data->cnvrt != 'u' && base == 10)

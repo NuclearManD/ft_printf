@@ -48,7 +48,7 @@ static int	putnbr_base(intmax_t n, char base, char caps, t_fmt_d *f)
 			i += 0;
 		i += rec_pn_base(f->fd, -(n % base), base, caps);
 	}
-	else
+	else if (cnt > 0)
 		i += rec_pn_base(f->fd, n, base, caps);
 	return (i);
 }
@@ -62,8 +62,9 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 {
 	int			len;
 
-	if (data->precision == 0 && num == 0)
-		return (0);
+	if (data->precision == 0 && num == 0 && data->cnvrt != 'p')
+		if ((data->flags & FLAG_POUND) == 0)
+			return (0);
 	len = nchar_abs(num, base, data);
 	if (len < data->precision)
 		len = data->precision;
