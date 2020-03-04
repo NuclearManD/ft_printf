@@ -66,17 +66,15 @@ static int	get_num_len(intmax_t num, char base, t_fmt_d *data)
 		if ((data->flags & FLAG_POUND) == 0)
 			return (0);
 	len = nchar_abs(num, base, data);
+	if ((data->flags & FLAG_POUND) && data->cnvrt == 'o' && num != 0)
+		len++;
 	if (len < data->precision)
 		len = data->precision;
 	if (((num < 0 && base == 10) || (data->flags & 24)) && data->cnvrt != 'u')
 		len++;
 	if (data->flags & FLAG_POUND || data->cnvrt == 'p')
-	{
 		if (((data->cnvrt | 32) == 'x' && num != 0) || data->cnvrt == 'p')
 			len += 2;
-		else if (data->cnvrt == 'o' && num != 0)
-			len++;
-	}
 	if (len < data->min_width && (data->flags & FLAG_ZERO))
 		len = data->min_width;
 	return (len);
